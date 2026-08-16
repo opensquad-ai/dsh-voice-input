@@ -20,6 +20,32 @@ A voice input plugin for [DeepSeek Harness](https://deepseek.com/harness/): adds
 | **Python 3.10+** | The only soft dependency you must install manually (the plugin auto-installs the rest via `pip install`) |
 | **ffmpeg** | Required to transcode browser recordings to WAV: run `winget install ffmpeg` or install from the official site and add to PATH |
 
+### Installing Python 3.10+ manually
+
+> The plugin auto-installs the remaining Python dependencies (flask / onnxruntime, etc.), so you only need Python itself.
+
+1. Open [python.org/downloads](https://www.python.org/downloads/) and download the latest **Python 3.10+** (Windows users: choose `Windows installer (64-bit)`).
+2. Run the installer, **make sure to check `Add python.exe to PATH`** at the bottom, then click `Install Now`.
+3. After installation, **open a new terminal** (PowerShell / CMD) and verify:
+   ```bash
+   python --version
+   # Expected output similar to: Python 3.12.x (3.10 or higher is fine)
+   ```
+
+### Installing ffmpeg manually
+
+> Browser recordings are in WebM format; ffmpeg is required to convert them to WAV before SenseVoice can process them.
+
+- **Option 1 (recommended on Windows)**: run the following in PowerShell
+  ```bash
+  winget install ffmpeg
+  ```
+  After installing, **restart your terminal** and verify:
+  ```bash
+  ffmpeg -version
+  ```
+- **Option 2 (official site)**: download from [ffmpeg.org/download.html](https://ffmpeg.org/download.html), extract it, and add its `bin` directory to your system PATH.
+
 Done automatically at plugin startup:
 
 1. Detect Python → auto-install dependencies like `flask / onnxruntime / librosa / soundfile / pyyaml` (slow on first run)

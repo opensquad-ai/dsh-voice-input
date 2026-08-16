@@ -20,6 +20,32 @@
 | **Python 3.10+** | 唯一需要手动装的软依赖（插件会自动 `pip install` 其余依赖） |
 | **ffmpeg** | 浏览器录音转码为 WAV 所需：`winget install ffmpeg` 或官网安装并加入 PATH |
 
+### 手动安装 Python 3.10+
+
+> 插件会自动安装剩下的 Python 依赖（flask / onnxruntime 等），你只需装好 Python 本身。
+
+1. 打开 [python.org/downloads](https://www.python.org/downloads/)，下载最新的 **Python 3.10+**（Windows 选 `Windows installer (64-bit)`）。
+2. 运行安装程序，**务必勾选底部的 `Add python.exe to PATH`**，再点 `Install Now`。
+3. 安装完成后，**重新打开一个终端**（PowerShell / CMD），验证安装成功：
+   ```bash
+   python --version
+   # 期望输出类似: Python 3.12.x（3.10 或更高即可）
+   ```
+
+### 手动安装 ffmpeg
+
+> 浏览器录音是 WebM 格式，需要 ffmpeg 转成 WAV 才能交给 SenseVoice。
+
+- **方式一（Windows 推荐）**：在 PowerShell 里执行
+  ```bash
+  winget install ffmpeg
+  ```
+  安装完成后**重启终端**，验证：
+  ```bash
+  ffmpeg -version
+  ```
+- **方式二（官网）**：访问 [ffmpeg.org/download.html](https://ffmpeg.org/download.html) 下载，解压后把 `bin` 目录加入系统的 PATH 环境变量。
+
 插件启动时自动完成：
 1. 探测 Python → 自动安装 `flask / onnxruntime / librosa / soundfile / pyyaml` 等依赖（首次较慢）
 2. 自动拉起下载网关（`gateway.py` :7102）
