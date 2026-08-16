@@ -11,30 +11,17 @@
 
 ## 依赖
 
-**重要：这是一个纯前端 UI 插件，它依赖一个本地 Python 后端来提供模型下载与转写能力。** npm 包本身不包含后端代码，需要单独安装并启动：
+**这是一个全自动插件：Python 后端（依赖安装 + 进程启动）由插件在 dsh 启动时自动完成，首次使用模型也自动下载。** 你只需要：
 
-| 服务 | 端口 | 作用 |
-| --- | --- | --- |
-| `gateway.py`（下载网关） | 7102 | 模型下载进度、服务启动、卸载 |
-| `service.py`（SenseVoice 服务） | 7101 | 语音转文本推理 |
+| 前置 | 说明 |
+| --- | --- |
+| **Python 3.10+** | 唯一需要手动装的软依赖（插件会自动 `pip install` 其余依赖） |
+| **ffmpeg** | 浏览器录音转码为 WAV 所需：`winget install ffmpeg` 或官网安装并加入 PATH |
 
-后端代码在本仓库的 [`backend/`](./backend) 目录。
-
-### 安装后端
-
-```bash
-# 1. 克隆本仓库（或直接使用仓库内的 backend/ 目录）
-git clone https://github.com/opensquad-ai/dsh-voice-input.git
-cd dsh-voice-input/backend
-
-# 2. 安装 Python 依赖
-pip install -r requirements.txt
-
-# 3. 启动下载网关（自动拉起转写服务）
-python gateway.py --port 7102 --sensevoice-port 7101
-```
-
-> 需要系统安装 `ffmpeg`（浏览器录制的音频需转码为 WAV）。
+插件启动时自动完成：
+1. 探测 Python → 自动安装 `flask / onnxruntime / librosa / soundfile / pyyaml` 等依赖（首次较慢）
+2. 自动拉起下载网关（`gateway.py` :7102）
+3. 首次使用 → 自动下载模型（约 230MB）并启动转写服务（`service.py` :7101）
 
 ## 安装插件
 
@@ -42,12 +29,12 @@ python gateway.py --port 7102 --sensevoice-port 7101
 dsh plugin --profile web add @opensquad/dsh-voice-input
 ```
 
-重启 dsh 后，输入框旁会出现麦克风按钮。
+重启 dsh 后，插件会在后台自动准备后端，输入框旁会出现麦克风按钮。
 
 ## 使用
 
-1. 确保本地后端已启动（`gateway.py`）。
-2. 第一次点击麦克风 → 确认下载模型 → 等待进度完成 → 自动启动服务。
+1. 重启 dsh 后稍等片刻（首次会自动装 Python 依赖并启动后端）。
+2. 点击麦克风 → 首次会确认下载模型 → 等待进度完成 → 自动启动服务。
 3. 再次点击麦克风开始录音，再点一次停止并转写，文字自动填入输入框。
 
 模型已安装时，点旁边的 ⚙ 可卸载后重新下载。
@@ -55,6 +42,7 @@ dsh plugin --profile web add @opensquad/dsh-voice-input
 ## 兼容性
 
 - Node.js ≥ 22.19.0
+- Python 3.10+（且 `python` 在 PATH）
 - DeepSeek Harness（Web profile）
 - 浏览器需支持 `MediaRecorder` / `getUserMedia`
 
