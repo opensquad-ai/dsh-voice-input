@@ -1,6 +1,6 @@
 {
   "name": "@opensquad/dsh-voice-input",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "SenseVoice 语音输入插件 for DeepSeek Harness：在对话输入框旁添加麦克风按钮，录音后调用本地 SenseVoice 服务转成文本填入输入框。首次使用自动下载模型并显示进度，后端由插件自动启动。",
   "type": "module",
   "main": "index.js",

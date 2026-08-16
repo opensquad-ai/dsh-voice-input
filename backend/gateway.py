@@ -50,9 +50,14 @@ SENSEVOICE_SERVICE = "http://127.0.0.1:7101"
 
 STATE = {
     "downloading": False,
+    "starting": False,
     "service_started_at": None,
     "service_pid": None,
+    "service_log": None,
 }
+
+# SenseVoice 子进程日志（落盘，方便排查启动失败）
+SERVICE_LOG_PATH = os.path.join(_HERE, "service.log")
 
 
 def _probe_service() -> dict:
@@ -96,12 +101,15 @@ def _start_service() -> dict:
         except OSError:
             STATE["service_pid"] = None
 
-    service_py = os.path.join(_PKG, "service.py")
+    service_py = os.path.join(_HERE, "service.py")
+    # 子进程输出落盘（代替 DEVNULL），启动失败时日志可见
+    if STATE["service_log"] is None:
+        STATE["service_log"] = open(SERVICE_LOG_PATH, "ab")
     proc = subprocess.Popen(
         [sys.executable, service_py, "--host", "127.0.0.1", "--port", str(SENSEVOICE_PORT)],
-        cwd=_PKG,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        cwd=_HERE,
+        stdout=STATE["service_log"],
+        stderr=subprocess.STDOUT,
         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
     )
     STATE["service_pid"] = proc.pid
@@ -167,10 +175,18 @@ def download_status():
 
 @app.route("/start", methods=["POST"])
 def start_service():
-    """下载完成后拉起 SenseVoice 服务。"""
+    """下载完成后拉起 SenseVoice 服务（非阻塞：后台线程启动，前端轮询 /health）。"""
     if not model_ready():
         return jsonify({"ok": False, "message": "模型未就绪，请先下载"}, 400)
-    return jsonify(_start_service())
+    # 已就绪直接返回
+    probe = _probe_service()
+    if probe.get("reachable") and probe.get("model_loaded"):
+        return jsonify({"ok": True, "message": "SenseVoice 服务已在运行", "health": probe})
+    if STATE["starting"]:
+        return jsonify({"ok": True, "message": "服务正在启动中…"})
+    STATE["starting"] = True
+    threading.Thread(target=_start_worker, daemon=True).start()
+    return jsonify({"ok": True, "message": "正在启动服务…"})
 
 
 @app.route("/uninstall", methods=["POST"])
@@ -190,6 +206,17 @@ def _autostart_worker():
         logger.info("SenseVoice 自动启动: %s", result.get("message"))
     except Exception as e:  # noqa: BLE001
         logger.error("SenseVoice 自动启动失败: %s", e)
+
+
+def _start_worker():
+    """后台拉起 SenseVoice 服务，不阻塞 /start 请求（前端轮询 /health 直到就绪）。"""
+    try:
+        result = _start_service()
+        logger.info("SenseVoice 启动: %s", result.get("message"))
+    except Exception as e:  # noqa: BLE001
+        logger.error("SenseVoice 启动失败: %s", e)
+    finally:
+        STATE["starting"] = False
 
 
 def main():

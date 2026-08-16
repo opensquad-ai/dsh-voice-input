@@ -107,7 +107,7 @@ window.__ModuleLoader__.load({
       const form = new FormData();
       form.append("file", wavBlob, "recording.wav");
       form.append("language", "auto");
-      const res = await fetch(SENSEVOICE_URL, { method: "POST", body: form });
+      const res = await fetch(SENSEVOICE_URL, { method: "POST", body: form, signal: AbortSignal.timeout(30000) });
       const raw = await res.text();
       let data = {};
       try { data = raw ? JSON.parse(raw) : {}; } catch { data = { error: raw || ("HTTP " + res.status) }; }
@@ -117,27 +117,27 @@ window.__ModuleLoader__.load({
 
     // ── 网关 API ─────────────────────────────────────────────────
     async function gatewayHealth() {
-      const res = await fetch(GATEWAY_URL + "/health", { method: "GET" });
+      const res = await fetch(GATEWAY_URL + "/health", { method: "GET", signal: AbortSignal.timeout(10000) });
       if (!res.ok) throw new Error("网关不可用 (" + res.status + ")");
       return await res.json();
     }
 
     async function gatewayDownload() {
-      const res = await fetch(GATEWAY_URL + "/download", { method: "POST" });
+      const res = await fetch(GATEWAY_URL + "/download", { method: "POST", signal: AbortSignal.timeout(15000) });
       const data = await res.json();
       if (!(res.ok || data.ok)) throw new Error(data.message || ("HTTP " + res.status));
       return data;
     }
 
     async function gatewayStart() {
-      const res = await fetch(GATEWAY_URL + "/start", { method: "POST" });
+      const res = await fetch(GATEWAY_URL + "/start", { method: "POST", signal: AbortSignal.timeout(15000) });
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error(data.message || ("HTTP " + res.status));
       return data;
     }
 
     async function gatewayUninstall() {
-      const res = await fetch(GATEWAY_URL + "/uninstall", { method: "POST" });
+      const res = await fetch(GATEWAY_URL + "/uninstall", { method: "POST", signal: AbortSignal.timeout(15000) });
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error(data.message || ("HTTP " + res.status));
       return data;
@@ -190,7 +190,7 @@ window.__ModuleLoader__.load({
       // 轮询下载进度
       const pollProgress = react.useCallback(async () => {
         try {
-          const res = await fetch(GATEWAY_URL + "/download/status", { method: "GET" });
+          const res = await fetch(GATEWAY_URL + "/download/status", { method: "GET", signal: AbortSignal.timeout(10000) });
           const d = await res.json();
           setDownloading(d.progress || 0);
           setDownloadMsg(d.message || (d.file ? "正在下载 " + d.file : "正在下载模型…"));
@@ -217,7 +217,22 @@ window.__ModuleLoader__.load({
             if (state === "done") break;
           }
           setDownloadMsg("模型下载完成，正在启动服务…");
+          // 非阻塞拉起服务，随后轮询 /health 直到就绪（网关刷新进度，避免假死）
           await gatewayStart();
+          const START_TIMEOUT = 180; // 秒
+          let waited = 0;
+          for (;;) {
+            await new Promise((r) => setTimeout(r, 1500));
+            waited += 1.5;
+            let ready = false;
+            try {
+              const h = await gatewayHealth();
+              ready = !!h.ready;
+            } catch (e) { /* 服务尚未可连通，继续等待 */ }
+            if (ready) break;
+            setDownloadMsg(`模型下载完成，正在启动服务…（${Math.floor(waited)}s）`);
+            if (waited >= START_TIMEOUT) throw new Error("服务启动超时，请查看后端日志");
+          }
           setStatus("ready");
           setPop(false);
           setDownloadMsg("");
