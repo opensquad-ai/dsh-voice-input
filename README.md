@@ -2,6 +2,8 @@
 
 [DeepSeek Harness](https://deepseek.com/harness/) 语音输入插件：在 Web 对话输入框旁添加一个麦克风按钮，录音后调用本地 [SenseVoice](https://github.com/FunAudioLLM/SenseVoice) 服务转写成文本，自动填入输入框。首次使用会引导下载模型并显示实时进度。
 
+> 英文版：README_EN.md
+
 ## 功能
 
 - 🎤 输入框旁麦克风按钮，一键录音转文字
