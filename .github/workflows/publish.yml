@@ -21,5 +21,11 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org/
 
+      # OIDC trusted publishing (tokenless auth) requires npm >= 11.5.1.
+      # Node 22 ships npm 10.x, which signs provenance but cannot authenticate
+      # the publish PUT tokenlessly -> silent 404. Upgrade before publishing.
+      - name: Upgrade npm for OIDC trusted publishing
+        run: npm install -g npm@latest
+
       - name: Publish to npm (OIDC trusted publishing)
         run: npm publish --provenance --access public
