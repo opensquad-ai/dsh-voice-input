@@ -18,7 +18,7 @@ A voice input plugin for [DeepSeek Harness](https://deepseek.com/harness/): adds
 | Prerequisite | Description |
 | --- | --- |
 | **Python 3.10+** | The only soft dependency you must install manually (the plugin auto-installs the rest via `pip install`) |
-| **ffmpeg** | Required to transcode browser recordings to WAV: run `winget install ffmpeg` or install from the official site and add to PATH |
+| **ffmpeg** (optional/recommended) | Only used as a fallback to transcode unusual audio; not needed for normal use. Run `winget install ffmpeg` or install from the official site and add to PATH |
 
 ### Installing Python 3.10+ manually
 
@@ -32,9 +32,9 @@ A voice input plugin for [DeepSeek Harness](https://deepseek.com/harness/): adds
    # Expected output similar to: Python 3.12.x (3.10 or higher is fine)
    ```
 
-### Installing ffmpeg manually
+### Installing ffmpeg manually (optional)
 
-> Browser recordings are in WebM format; ffmpeg is required to convert them to WAV before SenseVoice can process them.
+> The browser converts recordings to standard WAV, so ffmpeg is **not required for normal use**. It only serves as a fallback transcoder when the backend receives an unusual/unrecognizable audio file. Installing it is recommended to avoid transcription failures with certain browsers.
 
 - **Windows**: run the following in PowerShell
   ```bash

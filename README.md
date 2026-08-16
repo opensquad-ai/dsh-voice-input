@@ -18,7 +18,7 @@
 | 前置 | 说明 |
 | --- | --- |
 | **Python 3.10+** | 唯一需要手动装的软依赖（插件会自动 `pip install` 其余依赖） |
-| **ffmpeg** | 浏览器录音转码为 WAV 所需：`winget install ffmpeg` 或官网安装并加入 PATH |
+| **ffmpeg**（可选/推荐） | 仅用于异常音频的兜底转码，正常使用不需要；`winget install ffmpeg` 或官网安装并加入 PATH |
 
 ### 手动安装 Python 3.10+
 
@@ -32,9 +32,9 @@
    # 期望输出类似: Python 3.12.x（3.10 或更高即可）
    ```
 
-### 手动安装 ffmpeg
+### 手动安装 ffmpeg（可选）
 
-> 浏览器录音是 WebM 格式，需要 ffmpeg 转成 WAV 才能交给 SenseVoice。
+> 浏览器端会把录音转成标准 WAV，正常使用**不需要** ffmpeg。它仅在服务端收到异常/无法识别的音频时作为兜底转码使用，建议安装以免个别浏览器录音无法转写。
 
 - **Windows**：在 PowerShell 里执行
   ```bash
