@@ -1,0 +1,7 @@
+onnxruntime
+soundfile
+librosa
+numpy
+pyyaml
+flask
+flask-cors

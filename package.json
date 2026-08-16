@@ -1,0 +1,48 @@
+{
+  "name": "@opensquad/dsh-voice-input",
+  "version": "0.1.0",
+  "description": "SenseVoice 语音输入插件 for DeepSeek Harness：在对话输入框旁添加麦克风按钮，录音后调用本地 SenseVoice 服务转成文本填入输入框。首次使用自动下载模型并显示进度。",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ]
+    }
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "cordis",
+    "sensevoice",
+    "voice",
+    "asr",
+    "speech-to-text",
+    "voice-input"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/opensquad-ai/dsh-voice-input",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opensquad-ai/dsh-voice-input.git"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-client-runtime": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.1.0-rc.6"
+  }
+}
