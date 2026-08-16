@@ -43,13 +43,12 @@ function run(cmd, args, opts = {}) {
   })
 }
 
-/** 找到可用的 python 解释器 */
+/** 找到可用的 python 解释器（linux/macOS 常只有 python3，Windows 常用 python/py） */
 async function findPython() {
-  for (const py of ['python', 'py']) {
+  for (const py of ['python3', 'python', 'py']) {
     const r = await run(py, ['-c', 'import sys; print(sys.executable)'])
     if (r.ok) {
       const exe = r.stdout.trim().split('\n')[0]
-      if (exe && exe.toLowerCase().endsWith('.exe')) return { cmd: py, exe }
       if (exe) return { cmd: py, exe }
     }
   }

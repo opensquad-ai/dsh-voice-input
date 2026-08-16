@@ -36,7 +36,7 @@ A voice input plugin for [DeepSeek Harness](https://deepseek.com/harness/): adds
 
 > Browser recordings are in WebM format; ffmpeg is required to convert them to WAV before SenseVoice can process them.
 
-- **Option 1 (recommended on Windows)**: run the following in PowerShell
+- **Windows**: run the following in PowerShell
   ```bash
   winget install ffmpeg
   ```
@@ -44,7 +44,15 @@ A voice input plugin for [DeepSeek Harness](https://deepseek.com/harness/): adds
   ```bash
   ffmpeg -version
   ```
-- **Option 2 (official site)**: download from [ffmpeg.org/download.html](https://ffmpeg.org/download.html), extract it, and add its `bin` directory to your system PATH.
+- **macOS**: (requires [Homebrew](https://brew.sh/) first)
+  ```bash
+  brew install ffmpeg
+  ```
+- **Linux (Debian/Ubuntu)**: 
+  ```bash
+  sudo apt update && sudo apt install -y ffmpeg
+  ```
+- **Generic**: you can also download from [ffmpeg.org/download.html](https://ffmpeg.org/download.html), extract it, and add its `bin` directory to your system PATH.
 
 Done automatically at plugin startup:
 

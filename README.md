@@ -36,7 +36,7 @@
 
 > 浏览器录音是 WebM 格式，需要 ffmpeg 转成 WAV 才能交给 SenseVoice。
 
-- **方式一（Windows 推荐）**：在 PowerShell 里执行
+- **Windows**：在 PowerShell 里执行
   ```bash
   winget install ffmpeg
   ```
@@ -44,7 +44,15 @@
   ```bash
   ffmpeg -version
   ```
-- **方式二（官网）**：访问 [ffmpeg.org/download.html](https://ffmpeg.org/download.html) 下载，解压后把 `bin` 目录加入系统的 PATH 环境变量。
+- **macOS**（需先装 [Homebrew](https://brew.sh/)）：
+  ```bash
+  brew install ffmpeg
+  ```
+- **Linux (Debian/Ubuntu)**：
+  ```bash
+  sudo apt update && sudo apt install -y ffmpeg
+  ```
+- **通用方式**：也可访问 [ffmpeg.org/download.html](https://ffmpeg.org/download.html) 下载，解压后把 `bin` 目录加入系统的 PATH 环境变量。
 
 插件启动时自动完成：
 1. 探测 Python → 自动安装 `flask / onnxruntime / librosa / soundfile / pyyaml` 等依赖（首次较慢）
