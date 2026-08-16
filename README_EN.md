@@ -2,7 +2,7 @@
 
 A voice input plugin for [DeepSeek Harness](https://deepseek.com/harness/): adds a microphone button next to the web chat input box. Record, then a local [SenseVoice](https://github.com/FunAudioLLM/SenseVoice) service transcribes it to text and fills the input box automatically. On first use, it guides you through downloading the model with a live progress indicator.
 
-> 简体中文版 / Simplified Chinese: README.md
+> 简体中文版 / Simplified Chinese: [README.md](./README.md)
 
 ## Features
 
